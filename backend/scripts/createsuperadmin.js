@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Superadmin = require('../models/superadmin'); // Assuming your Superadmin model is here

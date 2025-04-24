@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 /**
  * Script to assign stores to products based on their order
  * - First two products to Siragugal

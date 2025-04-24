@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const Worker = require('../../models/Worker');
 
 // Get all workers with filtering and sorting

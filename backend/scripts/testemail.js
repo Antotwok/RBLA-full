@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 require('dotenv').config();
 const { sendOtpEmail } = require('../utils/email');
 

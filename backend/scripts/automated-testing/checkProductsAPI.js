@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const axios = require('axios');
 
 async function checkProductsAPI() {

@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const { Category } = require('../../models');
 
 // Get all categories

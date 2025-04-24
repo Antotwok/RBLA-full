@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const mongoose = require('mongoose');
 
 const storeSchema = new mongoose.Schema({

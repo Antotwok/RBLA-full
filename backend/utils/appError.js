@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 class AppError extends Error {
     constructor(message, statusCode) {
         super(message);

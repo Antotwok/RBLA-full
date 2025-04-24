@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 // Wrapper function to catch async errors
 exports.catchAsync = fn => {
     return (req, res, next) => {

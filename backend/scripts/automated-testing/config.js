@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 // Test configuration
 module.exports = {
     API_URL: 'http://localhost:5000',

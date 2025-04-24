@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const User = require('../../models/user/User');
 const Order = require('../../models/user/Order');
 

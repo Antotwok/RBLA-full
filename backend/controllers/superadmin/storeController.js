@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const Store = require('../../models/Store');
 
 // Get all stores

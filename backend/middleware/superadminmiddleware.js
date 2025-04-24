@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const jwt = require('jsonwebtoken');
 const Superadmin = require('../models/superadmin');
 const AppError = require('../utils/appError');

@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const { Product } = require('../../models');
 
 // Get all products with optional filtering

@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 /**
  * Migration script to update existing products to use the new store field instead of unit field
  * 

@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const Customer = require('../../models/Customer');
 const AppError = require('../../utils/appError');
 const { catchAsync } = require('../../utils/catchAsync');

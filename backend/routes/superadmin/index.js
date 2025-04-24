@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const express = require('express');
 const router = express.Router();
 const { createAdmin, updateAdmin, deleteAdmin, getAdmins } = require('../../controllers/superadmin/AdminController');

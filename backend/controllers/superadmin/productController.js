@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const Product = require('../../models/Product');
 const Category = require('../../models/category');
 const AppError = require('../../utils/appError');

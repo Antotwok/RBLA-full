@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const jwt = require('jsonwebtoken');
 const Admin = require('../../models/admin');
 

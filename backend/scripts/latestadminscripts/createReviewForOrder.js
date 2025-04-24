@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Order = require('../../models/user/Order');

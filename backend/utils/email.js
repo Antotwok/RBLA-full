@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({

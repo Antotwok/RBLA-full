@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const router = require('express').Router();
 const braintreeController = require('../../controllers/user/braintreeController');
 const auth = require('../../middleware/user/auth');

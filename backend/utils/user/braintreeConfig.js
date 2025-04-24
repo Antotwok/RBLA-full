@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const braintree = require('braintree');
 const chalk = require('chalk');
 require('dotenv').config();

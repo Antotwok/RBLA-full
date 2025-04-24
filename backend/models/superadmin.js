@@ -1,3 +1,4 @@
+// Backend Architect: Staines Paul
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 // superadmin schema for the craetion of the superadmin which is alraedy 
