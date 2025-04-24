@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Order = require('../../models/user/Order');
 // this logic cant be finsied 
 // Get sales overview for the admin's store

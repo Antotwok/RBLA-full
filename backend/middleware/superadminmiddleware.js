@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const jwt = require('jsonwebtoken');
 const Superadmin = require('../models/superadmin');
 const AppError = require('../utils/appError');

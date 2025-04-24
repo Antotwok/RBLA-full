@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Worker = require('../../models/Worker');
 
 // Get all workers for the admin's store

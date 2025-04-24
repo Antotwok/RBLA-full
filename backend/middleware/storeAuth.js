@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const jwt = require('jsonwebtoken');
 const { Product } = require('../models');
 require('dotenv').config();

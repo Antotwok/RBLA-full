@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const User = require('../../models/user/User');
 const Order = require('../../models/user/Order');
 

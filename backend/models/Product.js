@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const mongoose = require('mongoose');
 // this is the product model for the admin its for the crud of the products
 const productSchema = new mongoose.Schema({

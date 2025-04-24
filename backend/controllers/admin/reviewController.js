@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Review = require('../../models/user/Review');
 const Product = require('../../models/Product');
 const User = require('../../models/user/User');

@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const ProductUnit = require('../../models/schemas/productUnit');
 
 // Get all product units

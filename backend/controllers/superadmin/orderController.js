@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Order = require('../../models/user/Order');
 const mongoose = require('mongoose');
 

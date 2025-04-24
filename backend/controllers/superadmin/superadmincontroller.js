@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const jwt = require('jsonwebtoken');
 const SuperAdmin = require('../../models/superadmin');
 require('dotenv').config();

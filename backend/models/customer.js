@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const mongoose = require('mongoose');
 // this is not yet completed this a dummy data for the superadmin
 const customerSchema = new mongoose.Schema({

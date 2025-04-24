@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Cart = require('../../models/user/Cart');
 const CartItem = require('../../models/user/CartItem');
 const User = require('../../models/user/User');

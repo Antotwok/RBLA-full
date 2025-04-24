@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const BraintreePayment = require('../../models/user/BraintreePayment');
 const mongoose = require('mongoose');
 

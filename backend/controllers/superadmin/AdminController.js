@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Admin = require('../../models/admin'); 
 // this is the superadmin database where the admin 
 // data is stored and validated when the admin logins in the portal 

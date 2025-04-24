@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const axios = require('axios');
 const config = require('./config');
 const chalk = require('chalk');

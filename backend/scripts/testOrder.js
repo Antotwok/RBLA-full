@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const axios = require('axios');
 
 const API_URL = 'http://localhost:5000/api';

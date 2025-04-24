@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();

@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 class AppError extends Error {
     constructor(message, statusCode) {
         super(message);

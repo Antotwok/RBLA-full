@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Product = require('../../models/Product');
 const mongoose = require('mongoose'); // mongoose is required for ObjectId validation
 const path = require('path');

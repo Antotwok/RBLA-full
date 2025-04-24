@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Wishlist = require('../../models/user/Wishlist');
 const Product = require('../../models/Product');
 

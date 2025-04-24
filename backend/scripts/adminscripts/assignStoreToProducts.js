@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 /**
  * Script to assign a specific store to products based on criteria
  * 

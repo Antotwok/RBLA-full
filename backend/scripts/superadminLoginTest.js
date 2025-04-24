@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const axios = require('axios');
 
 // Test superadmin login

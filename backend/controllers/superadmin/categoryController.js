@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const Category = require('../../models/category');
 
 // Get all categories

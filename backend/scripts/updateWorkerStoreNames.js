@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Worker = require('../models/Worker');

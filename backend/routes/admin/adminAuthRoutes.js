@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const express = require('express');
 const { loginAdmin, logoutAdmin, verifySession } = require('../../controllers/admin/adminAuthController');
 const adminMiddleware = require('../../middleware/admin/adminMiddleware');

@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const gateway = require('../../utils/user/braintreeConfig');
 const BraintreePayment = require('../../models/user/BraintreePayment');
 const Order = require('../../models/user/Order');

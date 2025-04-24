@@ -1,4 +1,4 @@
-// Backend Architect: Staines Paul
+// Architect: SP
 const multer = require('multer');
 const path = require('path');
 
