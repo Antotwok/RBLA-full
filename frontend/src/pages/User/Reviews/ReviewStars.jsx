@@ -1,3 +1,4 @@
+// Architect: SP
 import React from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import './ReviewStars.css';

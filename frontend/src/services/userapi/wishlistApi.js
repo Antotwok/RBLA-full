@@ -1,3 +1,4 @@
+// Architect: SP
 import axios from 'axios';
 import { getAuthToken } from './authservice';
 

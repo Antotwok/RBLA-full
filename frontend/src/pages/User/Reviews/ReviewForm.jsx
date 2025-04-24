@@ -1,3 +1,4 @@
+// Architect: SP
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import ReviewStars from './ReviewStars';

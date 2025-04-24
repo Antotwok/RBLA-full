@@ -1,3 +1,4 @@
+// Architect: SP
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProduct, getAllCategories } from '../../../services/adminapi/index';

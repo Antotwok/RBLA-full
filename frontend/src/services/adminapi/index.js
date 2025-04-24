@@ -1,3 +1,4 @@
+// Architect: SP
 export { 
     getAllProducts,
     getProduct,

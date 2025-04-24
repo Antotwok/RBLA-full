@@ -1,3 +1,4 @@
+// Architect: SP
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../Context/CartContext';

@@ -1,3 +1,4 @@
+// Architect: SP
 // Simple event system for auth state changes
 const listeners = new Set();
 

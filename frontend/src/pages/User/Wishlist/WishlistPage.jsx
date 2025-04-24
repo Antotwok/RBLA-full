@@ -1,3 +1,4 @@
+// Architect: SP
 import React from 'react';
 import { useWishlist } from '../../../Context/WishlistContext';
 import WishlistItem from '../../../components/Wishlist/WishlistItem';

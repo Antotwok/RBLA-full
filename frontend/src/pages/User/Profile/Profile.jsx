@@ -1,3 +1,4 @@
+// Architect: SP
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../../../Context/UserContext';
 import { getProfile, updateProfile } from '../../../services/userapi/profileService';
