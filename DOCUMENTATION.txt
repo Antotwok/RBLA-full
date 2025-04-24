@@ -142,6 +142,23 @@ Frontend:
 CURRENT STRUCTURAL ISSUES & MAIN PROBLEMS
 =========================================
 
+Current Work To Be Done (More 2): Reducing Project Size & Asset Management
+------------------------------------------------------------
+- The `frontend/src/components/Assets` folder contains many extremely large image files (some are 10MB–50MB+ each, e.g., v6.png is 51MB, about3.png is 18MB, homepage.jpg is 23MB, etc.).
+- These images are the primary cause of your project’s large size and slow performance.
+
+Actionable Steps to Reduce Project Size:
+1. Compress Images: Use tools like TinyPNG, ImageOptim, or Squoosh to compress PNG/JPG files. This can reduce file size by 70–90% with minimal quality loss.
+2. Convert to Modern Formats: Convert PNG/JPG images to WebP or AVIF for better compression.
+3. Resize Images: Resize to the maximum display size required by your UI (e.g., 1200px wide for banners, 400px for thumbnails).
+4. Remove Unused or Duplicate Images: Audit which images are actually used in the codebase and delete any that are not referenced or are duplicates.
+5. Implement Lazy Loading: In React, use loading="lazy" on <img> tags or libraries like react-lazyload.
+6. Use a CDN for Production: Move images to a CDN or object storage (AWS S3, Cloudinary, etc.) and reference URLs instead of storing them in the repo.
+7. Optimize During Build/Deployment: Use build tools/scripts (e.g., imagemin, sharp) to auto-optimize images before deployment.
+
+Summary: The biggest and most immediate win is compressing, resizing, and converting your images. This will dramatically reduce your project size and improve loading speed for users and developers.
+
+
 1. SCHEMA AND DATA MODELING INCONSISTENCY
 - Order Schema Missing `store` Field:
   * `Product`, `Worker`, `Customer`, and `Admin` models all have a `store` or `storeName` field, but `Order` does not.
