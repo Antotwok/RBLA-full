@@ -8,44 +8,6 @@ const path = require('path');
 const multer = require('multer');
 const connectDB = require('./utils/database/mongoConfig');
 
-const productRoutes = require('./routes/productRoutes');
-const superadminRoutes = require('./routes/superadmin');
-const superadminAuthRoutes = require('./routes/superadminauthroutes');
-const superadminProductRoutes = require('./routes/superadmin/productRoutes');
-const superadminCategoryRoutes = require('./routes/superadmin/categoryRoutes');
-const superadminUploadRoutes = require('./routes/superadmin/uploadRoutes');
-const superadminOrderRoutes = require('./routes/superadmin/orderRoutes');
-const superadminPaymentRoutes = require('./routes/superadmin/paymentRoutes');
-const superadminReviewRoutes = require('./routes/superadmin/reviewRoutes');
-const superadminSalesReportRoutes = require('./routes/superadmin/salesReportRoutes');
-const superadminWorkerRoutes = require('./routes/superadmin/workerRoutes');
-const superadminUserRoutes = require('./routes/superadmin/users');
-const superadminStoreRoutes = require('./routes/superadmin/storeRoutes');
-// const unitRoutes = require('./routes/unitRoutes'); // Commented out as unit field is replaced by store
-const customerRoutes = require('./routes/superadmin/customerRoutes');
-const adminRoutes = require('./routes/superadmin/admins');
-const adminAuthRoutes = require('./routes/admin/adminAuthRoutes');
-const adminProductRoutes = require('./routes/admin/productRoutes');
-const adminCategoryRoutes = require('./routes/admin/categoryRoutes');
-const adminUploadRoutes = require('./routes/admin/uploadRoutes');
-const adminOrderRoutes = require('./routes/admin/orderRoutes');
-const adminPaymentRoutes = require('./routes/admin/paymentRoutes');
-const adminReviewRoutes = require('./routes/admin/reviewRoutes');
-const adminUserRoutes = require('./routes/admin/userRoutes');
-const adminSalesRoutes = require('./routes/admin/salesRoutes');
-const adminWorkerRoutes = require('./routes/admin/workerRoutes');
-
-const publicProductRoutes = require('./routes/public/productRoutes');
-const publicGeneralRoutes = require('./routes/public/generalRoutes');
-const publicRoutes = require('./routes/public/index');
-const userAuthRoutes = require('./routes/user/auth');
-const userProfileRoutes = require('./routes/user/profileRoutes');
-const userCartRoutes = require('./routes/user/cartRoutes');
-const userWishlistRoutes = require('./routes/user/wishlistRoutes');
-const userOrderRoutes = require('./routes/user/orderRoutes');
-const userBraintreeRoutes = require('./routes/user/braintreeRoutes');
-const userReviewRoutes = require('./routes/user/reviewRoutes');
-
 // Load environment variables
 dotenv.config();
 
@@ -71,13 +33,53 @@ app.use(cookieParser());
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// ======================= ROUTES IMPORT =======================
+const productRoutes = require('./routes/productRoutes');
+const superadminRoutes = require('./routes/superadmin');
+const superadminAuthRoutes = require('./routes/superadminauthroutes');
+const superadminProductRoutes = require('./routes/superadmin/productRoutes');
+const superadminCategoryRoutes = require('./routes/superadmin/categoryRoutes');
+const superadminUploadRoutes = require('./routes/superadmin/uploadRoutes');
+const superadminOrderRoutes = require('./routes/superadmin/orderRoutes');
+const superadminPaymentRoutes = require('./routes/superadmin/paymentRoutes');
+const superadminReviewRoutes = require('./routes/superadmin/reviewRoutes');
+const superadminSalesReportRoutes = require('./routes/superadmin/salesReportRoutes');
+const superadminWorkerRoutes = require('./routes/superadmin/workerRoutes');
+const superadminUserRoutes = require('./routes/superadmin/users');
+const superadminStoreRoutes = require('./routes/superadmin/storeRoutes');
+// const unitRoutes = require('./routes/unitRoutes');
+const customerRoutes = require('./routes/superadmin/customerRoutes');
+const adminRoutes = require('./routes/superadmin/admins');
+const adminAuthRoutes = require('./routes/admin/adminAuthRoutes');
+const adminProductRoutes = require('./routes/admin/productRoutes');
+const adminCategoryRoutes = require('./routes/admin/categoryRoutes');
+const adminUploadRoutes = require('./routes/admin/uploadRoutes');
+const adminOrderRoutes = require('./routes/admin/orderRoutes');
+const adminPaymentRoutes = require('./routes/admin/paymentRoutes');
+const adminReviewRoutes = require('./routes/admin/reviewRoutes');
+const adminUserRoutes = require('./routes/admin/userRoutes');
+const adminSalesRoutes = require('./routes/admin/salesRoutes');
+const adminWorkerRoutes = require('./routes/admin/workerRoutes');
+
+const publicProductRoutes = require('./routes/public/productRoutes');
+const publicGeneralRoutes = require('./routes/public/generalRoutes');
+const publicRoutes = require('./routes/public/index');
+const userAuthRoutes = require('./routes/user/auth');
+const userProfileRoutes = require('./routes/user/profileRoutes');
+const userCartRoutes = require('./routes/user/cartRoutes');
+const userWishlistRoutes = require('./routes/user/wishlistRoutes');
+const userOrderRoutes = require('./routes/user/orderRoutes');
+const userBraintreeRoutes = require('./routes/user/braintreeRoutes');
+const userReviewRoutes = require('./routes/user/reviewRoutes');
+
+// ======================= ROUTE MOUNTS =======================
 app.get('/', (req, res) => {
   res.send('Welcome to the NGO Products API!');
 });
 
-// API Routes of all the files 
+// API Routes
 app.use('/api/products', productRoutes);
+
 // superadmin api 
 app.use('/api/superadmin', superadminRoutes);
 app.use('/api/superadmin/auth', superadminAuthRoutes);
@@ -91,9 +93,9 @@ app.use('/api/superadmin/sales', superadminSalesReportRoutes);
 app.use('/api/superadmin/workers', superadminWorkerRoutes);
 app.use('/api/superadmin/users', superadminUserRoutes);
 app.use('/api/superadmin/stores', superadminStoreRoutes);
-// app.use('/api/units', unitRoutes); // Commented out as unit field is replaced by store
 app.use('/api/superadmin/customers', customerRoutes);
 app.use('/api/superadmin/admins', adminRoutes);
+
 // admin api routes 
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/products', adminProductRoutes);
@@ -120,65 +122,67 @@ app.use('/api/user/orders', userOrderRoutes);
 app.use('/api/user/braintree', userBraintreeRoutes);
 app.use('/api/user/reviews', userReviewRoutes);
 
-// Public routes 
-app.use('/api/public', publicRoutes);
-app.use('/api/public/products', publicProductRoutes);
-app.use('/api/public', publicGeneralRoutes);
+// ======================= AI CHATBOT ENDPOINT =======================
+const OpenAI = require("openai");
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Global error handling middleware
+app.post("/api/chatbot", async (req, res) => {
+  try {
+    const { message } = req.body;
+    const keywords = ["vaagai", "siragugal", "varnam"];
+    const isRelevant = keywords.some(k => message.toLowerCase().includes(k));
+
+    if (!isRelevant) {
+      return res.json({
+        reply: "I can only answer questions about Vaagai, Siragugal, and Varnam products."
+      });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are a helpful assistant that only answers questions about Vaagai, Siragugal, and Varnam product units." },
+        { role: "user", content: message }
+      ]
+    });
+
+    res.json({ reply: completion.choices[0].message.content });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Chatbot failed to respond" });
+  }
+});
+
+// ======================= GLOBAL ERROR HANDLER =======================
 app.use((err, req, res, next) => {
   console.error(chalk.red('❌ Error:'), err);
   
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map(error => error.message);
-    return res.status(400).json({
-      status: 'error',
-      message: errors.join(', ')
-    });
+    return res.status(400).json({ status: 'error', message: errors.join(', ') });
   }
 
-  // Duplicate key error
   if (err.code === 11000) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Duplicate field value entered'
-    });
+    return res.status(400).json({ status: 'error', message: 'Duplicate field value entered' });
   }
 
-  // JWT error
   if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
-      status: 'error',
-      message: 'Invalid token. Please log in again.'
-    });
+    return res.status(401).json({ status: 'error', message: 'Invalid token. Please log in again.' });
   }
 
-  // Token expired error
   if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
-      status: 'error',
-      message: 'Your token has expired. Please log in again.'
-    });
+    return res.status(401).json({ status: 'error', message: 'Your token has expired. Please log in again.' });
   }
 
-  // Default error
-  res.status(err.status || 500).json({
-    status: 'error',
-    message: err.message || 'Internal server error'
-  });
+  res.status(err.status || 500).json({ status: 'error', message: err.message || 'Internal server error' });
 });
 
-// Initialize server
+// ======================= SERVER START =======================
 async function startServer() {
   try {
-    // Connect to MongoDB first
     await connectDB();
-
-    // Start the server
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      // ASCII art for server start
       const serverArt = `
     🌟 ${chalk.green('✓')} RBLA5 Server Started Successfully ${chalk.green('✓')} 🌟
     ===============================================
@@ -198,5 +202,4 @@ async function startServer() {
   }
 }
 
-// Start the server
 startServer();

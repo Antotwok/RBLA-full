@@ -1,91 +1,78 @@
-import React, { useState } from 'react';
-import './Chatbot.css'; // Import the CSS file
-import chatbot from '../Assets/chatbot.png';
+import React, { useState } from "react";
+import "./Chatbot.css";
+import chatbotIcon from "../Assets/chatbot.png";
 
-const Chatbot = () => {
+export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hi! I can help you with Vaagai, Siragugal, or Varnam products. What would you like to know?" }
+  ]);
+  const [inputValue, setInputValue] = useState("");
 
-  const toggleChatbot = () => {
-    setIsOpen(!isOpen);
-  };
+  const handleSend = async () => {
+    if (!inputValue.trim()) return;
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
+    const userMessage = inputValue.trim();
+    const newMessages = [...messages, { sender: "user", text: userMessage }];
+    setMessages(newMessages);
+    setInputValue("");
 
-  const handleSendMessage = () => {
-    if (inputValue.trim() !== '') {
-      // Add user message to the chat
-      const userMessage = { text: inputValue, sender: 'user' };
-      setMessages([...messages, userMessage]);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage })
+      });
 
-      // Generate a bot response
-      const botResponse = generateBotResponse(inputValue);
-      setMessages((prevMessages) => [...prevMessages, botResponse]);
-
-      // Clear the input field
-      setInputValue('');
+      const data = await res.json();
+      newMessages.push({ sender: "bot", text: data.reply });
+      setMessages([...newMessages]);
+    } catch (error) {
+      newMessages.push({ sender: "bot", text: "Sorry, I’m having trouble responding right now." });
+      setMessages([...newMessages]);
     }
-  };
-
-  // Function to generate a bot response
-  const generateBotResponse = (userMessage) => {
-    let botMessage = '';
-    switch (userMessage.toLowerCase()) {
-      case 'hello':
-        botMessage = 'Hi there! How can I help you?';
-        break;
-      case 'how are you?':
-        botMessage = 'I am just a bot, but I am doing great! How about you?';
-        break;
-      case 'what is your name?':
-        botMessage = 'I am your friendly chatbot!';
-        break;
-      case 'bye':
-        botMessage = 'Goodbye! Have a great day!';
-        break;
-      default:
-        botMessage = "I'm sorry, I don't understand that. Can you please rephrase?";
-    }
-    return { text: botMessage, sender: 'bot' };
   };
 
   return (
-    <div className="chatbot-container">
-      <button className="chatbot-button" onClick={toggleChatbot}>
-        <img src={chatbot} alt="Chatbot" className="chatbot-icon" />
-      </button>
-
+    <div className="chatbot-wrapper">
       {isOpen && (
-        <div className="chatbot-window">
-          <div className="chatbot-header">
-            <h3>Chatbot</h3>
-            <button className="close-button" onClick={toggleChatbot}>
-              ×
-            </button>
+        <div className="chat-window">
+          <div className="chat-header">
+            <img src={chatbotIcon} alt="Bot" className="chat-logo" />
+            <span>TalkTribe</span>
+            <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
           </div>
-          <div className="chatbot-messages">
+
+          <div className="chat-body">
             {messages.map((msg, index) => (
-              <div key={index} className={`message ${msg.sender}`}>
+              <div
+                key={index}
+                className={msg.sender === "bot" ? "bot-message" : "user-message"}
+              >
                 {msg.text}
               </div>
             ))}
           </div>
-          <div className="chatbot-input-container">
+
+          <div className="chat-footer">
             <input
               type="text"
+              placeholder="Type a message..."
               value={inputValue}
-              onChange={handleInputChange}
-              placeholder="Type your message..."
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
-            <button onClick={handleSendMessage}>Send</button>
+            <button onClick={handleSend}>Send</button>
           </div>
         </div>
       )}
+
+      <img
+        src={chatbotIcon}
+        alt="Chatbot"
+        className="chatbot-icon"
+        onClick={() => setIsOpen(!isOpen)}
+      />
     </div>
   );
-};
-
-export default Chatbot;
+}

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import FashionForward from '../components/FashionForward/FashionForward';
 import SellerStories from '../components/SellerStories/SellerStories';
 import './Home.css';
+import Chatbot from "../components/Chatbot/Chatbot";
 
 const Home = () => {
-  const navigate = useNavigate(); // Define navigate
+  const navigate = useNavigate();
 
   return (
     <div className="page-container">
@@ -20,7 +21,6 @@ const Home = () => {
             We partner with store owners, corporate clients, event companies, or others 
             interested in wholesale buying. Each order will be fully customized to fit your needs.
           </p>
-          {/* Button linked to ContactUs page */}
           <button className="bulk-orders-btn" onClick={() => navigate('/contactus')}>
             Get In Touch
           </button>
@@ -30,6 +30,9 @@ const Home = () => {
         </div>
         <div className="bulk-orders-image"></div>
       </section>
+
+      {/* ✅ Add chatbot here so it floats */}
+      <Chatbot />
     </div>
   );
 };
