@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./Header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faChevronDown, faUser, faSignOutAlt, faUserCircle, faShoppingCart, faHeart, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faSearch, faChevronDown, faUser, faSignOutAlt, 
+  faUserCircle, faShoppingCart, faHeart, faBoxOpen 
+} from "@fortawesome/free-solid-svg-icons";
 import { useUser } from '../../Context/UserContext';
 import { useCart } from '../../Context/CartContext';
 import { useWishlist } from '../../Context/WishlistContext';
@@ -10,15 +13,15 @@ import axios from 'axios';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout: contextLogout, user } = useUser();
+  const { isAuthenticated, logout: contextLogout } = useUser();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [isProductsOpen, setIsProductsOpen] = useState(false);
-  const [isworksOpen, setIsworksOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null); // 🔥 controls which nav menu is open
   const [userName, setUserName] = useState("");
 
   const productCategories = [
@@ -34,9 +37,9 @@ const Header = () => {
     { name: "Blockprinting", path: "/block" },
     { name: "Tailoring", path: "/tailoring" },
     { name: "Handmade Products", path: "/handmade" },
-    
   ];
 
+  // Fetch user profile
   useEffect(() => {
     if (isAuthenticated) {
       fetchUserProfile();
@@ -58,6 +61,7 @@ const Header = () => {
     }
   };
 
+  // Hide/show header on scroll
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -68,30 +72,15 @@ const Header = () => {
       }
       setLastScrollY(currentScrollY);
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  // Close dropdowns when clicking outside navbar
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest('.products-dropdown')) {
-        setIsProductsOpen(false);
-      }
-    };
-
-    
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest('.works-dropdown')) {
-        setIsworksOpen(false);
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.main-nav')) {
+        setOpenDropdown(null);
       }
     };
     document.addEventListener('click', handleClickOutside);
@@ -99,19 +88,19 @@ const Header = () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
-  
 
+  // Search
   const handleSearch = async (e) => {
     e.preventDefault();
     if (query.trim() === "") {
       setSearchResults([]);
       return;
     }
-
     try {
-      const response = await fetch(`http://localhost:5000/api/public/search?query=${encodeURIComponent(query)}`);
+      const response = await fetch(
+        `http://localhost:5000/api/public/search?query=${encodeURIComponent(query)}`
+      );
       const data = await response.json();
-      
       if (data.success) {
         setSearchResults(data.products);
       } else {
@@ -128,26 +117,20 @@ const Header = () => {
     setQuery(e.target.value);
   };
 
-  const toggleProducts = (e) => {
-    e.stopPropagation();
-    setIsProductsOpen(!isProductsOpen);
+  // Unified toggle function 🔥 (closes the other)
+  const toggleDropdown = (menu) => {
+    setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  const toggleworks = (e) => {
-    e.stopPropagation();
-    setIsworksOpen(!isworksOpen);
-  };
-
-  const handleLogout = async () => {
+  const handleLogout = () => {
     contextLogout();
-    navigate('/loginsignup', { replace: true });  // Use replace to prevent back navigation
+    navigate('/loginsignup', { replace: true });
   };
 
   const handleProductClick = () => {
-    setSearchResults([]);  // Clear search results
-    setQuery("");         // Clear search query
-    setIsProductsOpen(false); // Close products dropdown
-    setIsworksOpen(false);   // Close works dropdown
+    setSearchResults([]);
+    setQuery("");
+    setOpenDropdown(null); // close dropdowns
   };
 
   return (
@@ -159,8 +142,8 @@ const Header = () => {
       <div className="top-bar">
         <div className="logo">
           <Link to="/" onClick={handleProductClick}>
-          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>Unity Threads</h2>
-      <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>ஒன்றிணை நூலிழை</h2>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>Unity Threads</h2>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>ஒன்றிணை நூலிழை</h2>
           </Link>
         </div>
 
@@ -183,27 +166,32 @@ const Header = () => {
                 type="text"
                 value={query}
                 onChange={handleInputChange}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch(e)}
                 placeholder="Search products..."
               />
               <button className="search-button" onClick={handleSearch}>
                 <FontAwesomeIcon icon={faSearch} />
               </button>
+
               {searchResults.length > 0 && (
                 <div className="search-results">
                   {searchResults.map((product) => (
-                    <Link 
-                      to={`/product/${product._id}`} 
-                      key={product._id} 
+                    <Link
+                      to={`/product/${product._id}`}
+                      key={product._id}
                       className="search-result-item"
                       onClick={handleProductClick}
                     >
-                      <img 
-                        src={product.image_url.startsWith('http') ? product.image_url : `http://localhost:5000${product.image_url}`} 
+                      <img
+                        src={
+                          product.image_url.startsWith("http")
+                            ? product.image_url
+                            : `http://localhost:5000${product.image_url}`
+                        }
                         alt={product.name}
                         onError={(e) => {
-                          console.log('Image failed to load:', product.image_url);
-                          e.target.src = 'https://via.placeholder.com/40';
+                          console.log("Image failed to load:", product.image_url);
+                          e.target.src = "https://via.placeholder.com/40";
                         }}
                       />
                       <div className="search-result-info">
@@ -221,12 +209,15 @@ const Header = () => {
               )}
             </div>
           </div>
+
           <div className="account-links">
             {isAuthenticated ? (
               <>
                 <Link to="/wishlist" className="account-link wishlist-link">
                   <FontAwesomeIcon icon={faHeart} />
-                  {wishlistCount > 0 && <span className="wishlist-count">{wishlistCount}</span>}
+                  {wishlistCount > 0 && (
+                    <span className="wishlist-count">{wishlistCount}</span>
+                  )}
                   <span>WISHLIST</span>
                 </Link>
                 <Link to="/orders" className="account-link orders-link">
@@ -235,7 +226,9 @@ const Header = () => {
                 </Link>
                 <Link to="/cart" className="account-link cart-link">
                   <FontAwesomeIcon icon={faShoppingCart} />
-                  {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                  {cartCount > 0 && (
+                    <span className="cart-count">{cartCount}</span>
+                  )}
                   <span>CART</span>
                 </Link>
                 <Link to="/profile" className="account-link">
@@ -261,14 +254,15 @@ const Header = () => {
         <ul>
           <li><Link to="/" onClick={handleProductClick}>HOME</Link></li>
           <li><Link to="/aboutpage" onClick={handleProductClick}>ABOUT US</Link></li>
-          <li className={`products-dropdown ${isProductsOpen ? 'active' : ''}`}>
-            <div className="nav-link" onClick={toggleProducts}>
-              PRODUCTS <FontAwesomeIcon icon={faChevronDown} className={`dropdown-icon ${isProductsOpen ? 'open' : ''}`} />
+          
+          <li className={`products-dropdown ${openDropdown === "products" ? "active" : ""}`}>
+            <div className="nav-link" onClick={() => toggleDropdown("products")}>
+              PRODUCTS <FontAwesomeIcon icon={faChevronDown} className={`dropdown-icon ${openDropdown === "products" ? "open" : ""}`} />
             </div>
-            <div className={`dropdown-menu ${isProductsOpen ? 'show' : ''}`}>
+            <div className={`dropdown-menu ${openDropdown === "products" ? "show" : ""}`}>
               {productCategories.map((category) => (
-                <Link 
-                  key={category.path} 
+                <Link
+                  key={category.path}
                   to={category.path}
                   className="dropdown-item"
                   onClick={handleProductClick}
@@ -278,14 +272,15 @@ const Header = () => {
               ))}
             </div>
           </li>
-          <li className={`works-dropdown ${isworksOpen ? 'active' : ''}`}>
-            <div className="nav-link" onClick={toggleworks}>
-              Our Works <FontAwesomeIcon icon={faChevronDown} className={`dropdown-icon ${isworksOpen ? 'open' : ''}`} />
+
+          <li className={`works-dropdown ${openDropdown === "works" ? "active" : ""}`}>
+            <div className="nav-link" onClick={() => toggleDropdown("works")}>
+              Our Works <FontAwesomeIcon icon={faChevronDown} className={`dropdown-icon ${openDropdown === "works" ? "open" : ""}`} />
             </div>
-            <div className={`dropdown-menu ${isworksOpen ? 'show' : ''}`}>
+            <div className={`dropdown-menu ${openDropdown === "works" ? "show" : ""}`}>
               {worksCategories.map((category) => (
-                <Link 
-                  key={category.path} 
+                <Link
+                  key={category.path}
                   to={category.path}
                   className="dropdown-item"
                   onClick={handleProductClick}
@@ -295,11 +290,11 @@ const Header = () => {
               ))}
             </div>
           </li>
+
           <li><Link to="/gallery" onClick={handleProductClick}>GALLERY</Link></li>
           <li><Link to="/contactus" onClick={handleProductClick}>CONTACT US</Link></li>
         </ul>
       </nav>
-
     </div>
   );
 };
