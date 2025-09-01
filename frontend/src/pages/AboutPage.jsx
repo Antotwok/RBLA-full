@@ -15,7 +15,7 @@ const AboutPage = () => {
   };
 
   const units = [
-    { name: "Varnam", text_color: "#80002f", font_style: "italic", logo: varlogo },
+    { name: "Varnam", text_color: "#08cbf7ff", font_style: "italic", logo: varlogo },
     { name: "Vaagai", text_color: "#80002f", font_style: "italic", logo: vaalogo },
     { name: "Siragugal", text_color: "#80002f", font_style: "italic", logo: sirlogo }
 ];
