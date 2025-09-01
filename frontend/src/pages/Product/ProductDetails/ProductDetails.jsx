@@ -1,5 +1,4 @@
-// Architect: SP
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProduct } from '../../../services/publicapi/productAPI';
 import { canReviewProduct } from '../../../services/userapi/reviewAPI';
@@ -9,13 +8,46 @@ import WishlistButton from '../../../components/Wishlist/WishlistButton';
 import { toast } from 'react-toastify';
 import ReviewStars from '../../User/Reviews/ReviewStars';
 import ReviewList from '../../User/Reviews/ReviewList';
+import {
+  Star,
+  Sparkles,
+  Camera,
+  Video,
+  Filter,
+  ThumbsUp,
+  Edit3,
+  Trash2,
+} from 'lucide-react';
 import './ProductDetails.css';
 
-const ProductDetails = () => {
+// AI summarization function outside the component
+async function fetchHFSummary(text) {
+  const API_URL = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
+  const token = process.env.REACT_APP_HF_API_TOKEN;
+
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ inputs: text }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch summary');
+  }
+
+  const data = await response.json();
+  return data[0]?.summary_text || 'No summary available';
+}
+
+export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, loading: cartLoading } = useCart();
+  const { addToCart } = useCart();
   const { isAuthenticated } = useUser();
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,58 +59,53 @@ const ProductDetails = () => {
   const [canReview, setCanReview] = useState(false);
   const [reviewMessage, setReviewMessage] = useState('');
 
-  const getFullImageUrl = (imagePath) => {
-    if (!imagePath) return '';
-    if (imagePath.startsWith('http')) return imagePath;
-    // Make sure the path starts with a slash
-    const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-    return `http://localhost:5000${path}`;
-  };
 
+  // Review form input states and refs
+  const [newReviewRating, setNewReviewRating] = useState(0);
+  const [newReviewComment, setNewReviewComment] = useState('');
+  const [uploadedPhotos, setUploadedPhotos] = useState([]);
+  const [uploadedVideo, setUploadedVideo] = useState(null);
+  const photoInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+
+  // AI summary state
+  const [aiSummary, setAiSummary] = useState('[Loading AI summary...]');
+
+  // Fetch product data on mount or id change
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
         const data = await getProduct(id);
-        console.log("Product data:", data); // Debug log
-
         if (data.success && data.data) {
-          // Ensure we have valid image URLs
-          let productImages = [];
-          if (data.data.images && Array.isArray(data.data.images)) {
-            productImages = data.data.images.map(img => getFullImageUrl(img));
-          }
-          
-          // If no images array or empty, use the main image_url
-          if (productImages.length === 0 && data.data.image_url) {
-            productImages = [getFullImageUrl(data.data.image_url)];
-          }
-          
-          const productData = {
-            ...data.data,
-            images: productImages,
-            image_url: getFullImageUrl(data.data.image_url)
-          };
-          
-          console.log("Processed product data:", productData); // Debug log
-          setProduct(productData);
+          const images =
+  data.data.images && data.data.images.length > 0
+    ? data.data.images.map((img) =>
+        img.startsWith('http')
+          ? img
+          : `http://localhost:5000${img.startsWith('/') ? img : `/${img}`}`
+      )
+    : data.data.image_url
+    ? [`http://localhost:5000${data.data.image_url.startsWith('/') ? data.data.image_url : `/${data.data.image_url}`}`]
+    : [];
+
+            
+          setProduct({ ...data.data, images });
           setSelectedImage(0);
         } else {
           setError('Product data is invalid');
         }
       } catch (err) {
         setError('Failed to load product details');
-        console.error('Error fetching product:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchProduct();
-    }
+    if (id) fetchProduct();
   }, [id]);
 
+  // Check if user can review the product
   useEffect(() => {
     const checkReviewEligibility = async () => {
       if (isAuthenticated && product?._id) {
@@ -87,52 +114,71 @@ const ProductDetails = () => {
         setReviewMessage(result.message);
       }
     };
-    
     checkReviewEligibility();
   }, [isAuthenticated, product?._id]);
 
+  // Prepare review text for AI summarization
+  const allReviewsText = React.useMemo(() => {
+    if (!product?.reviews) return '';
+    return product.reviews.map((r) => r.comment).join('\n');
+  }, [product]);
+
+  // Fetch AI summary when reviews change
+  useEffect(() => {
+
+  if (!allReviewsText) {
+    console.log('AI input text is empty');
+    return;
+  }
+
+  console.log('AI input text:', allReviewsText);
+  
+
+  let isMounted = true;
+  fetchHFSummary(allReviewsText)
+    .then((summary) => {
+      console.log('AI summary result:', summary);
+      if (isMounted) setAiSummary(summary);
+    })
+    .catch((error) => {
+      console.error('Error fetching AI summary:', error);
+      if (isMounted) setAiSummary('Failed to load summary.');
+    });
+
+  return () => {
+    isMounted = false;
+  };
+}, [allReviewsText]);
+
+
+  // Calculate dynamic price based on selections
   const calculatePrice = () => {
     if (!product) return 0;
-    let basePrice = product.new_price || product.price;
-    
-    // Size multiplier
-    const sizeMultipliers = {
-      'default': 1,
-      'small': 0.8,
-      'medium': 1.2,
-      'large': 1.5
-    };
-    
-    // Side printing multiplier
-    const sideMultipliers = {
-      'single': 1,
-      'double': 1.5
-    };
-
+    const basePrice = product.new_price || product.price;
+    const sizeMultipliers = { default: 1, small: 0.8, medium: 1.2, large: 1.5 };
+    const sideMultipliers = { single: 1, double: 1.5 };
     return (basePrice * sizeMultipliers[size] * sideMultipliers[printedSide] * quantity).toFixed(2);
   };
 
+ 
+
+  // Add product to cart
   const handleAddToCart = async () => {
+    setAddingToCart(true);
     try {
-      setAddingToCart(true);
       const productToAdd = {
         _id: product._id,
         name: product.name,
         price: parseFloat(calculatePrice()),
-        image: product.images[0] || product.image_url,
+        image: product.images?.[0] || product.image_url,
         size,
         printedSide,
       };
-      
       const success = await addToCart(productToAdd, quantity);
-      if (success) {
-        toast.success('Added to cart successfully!');
-        return true;
-      } else {
-        toast.error('Failed to add to cart. Please try again.');
-        return false;
-      }
-    } catch (err) {
+      if (success) toast.success('Added to cart successfully!');
+      else toast.error('Failed to add to cart. Please try again.');
+      return success;
+    } catch {
       toast.error('Error adding to cart. Please try again.');
       return false;
     } finally {
@@ -140,186 +186,142 @@ const ProductDetails = () => {
     }
   };
 
+  // Buy now action
   const handleBuyNow = async () => {
     const success = await handleAddToCart();
-    if (success) {
-      navigate('/checkout');
-    }
+    if (success) navigate('/checkout');
   };
 
-  if (loading) {
-    return (
-      <div className="product-details-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading product details...</p>
-      </div>
-    );
-  }
+  // Photo upload handler
+  const handlePhotoUpload = (e) => {
+    const files = Array.from(e.target.files).slice(0, 3 - uploadedPhotos.length);
+    setUploadedPhotos((prev) => [...prev, ...files]);
+    e.target.value = null;
+  };
 
-  if (error || !product) {
+  // Video upload handler
+  const handleVideoUpload = (e) => {
+    if (e.target.files[0]) setUploadedVideo(e.target.files[0]);
+    e.target.value = null;
+  };
+
+  if (loading) return <div>Loading product details...</div>;
+  if (error || !product)
     return (
-      <div className="product-details-error">
+      <div>
         <h2>Error</h2>
         <p>{error || 'Product not found'}</p>
-        <button onClick={() => navigate(-1)} className="back-button">
-          Go Back
-        </button>
+        <button onClick={() => navigate(-1)}>Go Back</button>
       </div>
     );
-  }
 
   return (
     <div className="product-details-container">
+      {/* Product Display */}
       <div className="product-main-section">
-        {/* Product Images Section */}
         <div className="product-images-section">
-          <div className="main-image">
-            {product.images && product.images.length > 0 ? (
-              <img 
+          {product.images.length > 0 ? (
+            <>
+              <img
                 src={product.images[selectedImage]}
                 alt={product.name}
                 className="product-main-image"
-                onError={(e) => {
-                  console.log("Image error, falling back to default");
-                  e.target.onerror = null;
-                  e.target.src = product.image_url || '/placeholder-image.jpg';
-                }}
+                onError={(e) => (e.target.src = product.image_url || '/placeholder-image.jpg')}
               />
-            ) : (
-              <div className="no-image-placeholder">No image available</div>
-            )}
-          </div>
-          <div className="image-thumbnails">
-            {product.images && product.images.length > 0 ? (
-              product.images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`${product.name} view ${index + 1}`}
-                  className={`thumbnail ${selectedImage === index ? 'selected' : ''}`}
-                  onClick={() => setSelectedImage(index)}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = product.image_url || '/placeholder-image.jpg';
-                  }}
-                />
-              ))
-            ) : null}
-          </div>
+              <div className="image-thumbnails">
+                {product.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`${product.name} view ${idx + 1}`}
+                    className={`thumbnail ${selectedImage === idx ? 'selected' : ''}`}
+                    onClick={() => setSelectedImage(idx)}
+                    onError={(e) => (e.target.src = product.image_url || '/placeholder-image.jpg')}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div>No images available</div>
+          )}
         </div>
-
-        {/* Product Info Section */}
         <div className="product-info-section">
           <div className="product-header">
-            <h1 className="product-title">{product.name}</h1>
+            <h1>{product.name}</h1>
             <WishlistButton productId={id} />
           </div>
-          
-          {/* Display average rating if available */}
           {product.averageRating > 0 && (
             <div className="product-rating">
               <ReviewStars rating={product.averageRating} />
-              <span className="rating-text">({product.averageRating.toFixed(1)})</span>
+              <span className="rating-text">({product.reviews?.length || 0} reviews)</span>
             </div>
           )}
-          
-          <p className="product-description">{product.description}</p>
-
+          <p>{product.description}</p>
           <div className="price-section">
-            {product.old_price && (
-              <div className="original-price">₹{product.old_price}</div>
-            )}
-            <div className="current-price">₹{product.new_price || product.price}</div>
-            <div className="stock-info">
-              {product.stock > 0 ? (
-                <span className={`in-stock ${product.stock <= 5 ? 'low' : ''}`}>
-                  {product.stock <= 5 ? 'Low Stock' : 'In Stock'} ({product.stock} {product.stock === 1 ? 'item' : 'items'} left)
-                </span>
-              ) : (
-                <span className="out-of-stock">Out of Stock</span>
-              )}
-            </div>
+            {product.old_price && <span className="original-price">₹{product.old_price}</span>}
+            <span className="current-price">₹{product.new_price || product.price}</span>
           </div>
-
-          {/* Product Options */}
+          <div>
+            {product.stock > 0 ? (
+              <span className={product.stock <= 5 ? 'low-stock' : 'in-stock'}>
+                {product.stock <= 5 ? 'Low Stock' : 'In Stock'} ({product.stock} {product.stock === 1 ? 'item' : 'items'} left)
+              </span>
+            ) : (
+              <span className="out-of-stock">Out of Stock</span>
+            )}
+          </div>
           <div className="product-options">
-            <div className="option-group">
-              <label>Size:</label>
+            <label>
+              Size:
               <select value={size} onChange={(e) => setSize(e.target.value)} disabled={addingToCart}>
                 <option value="default">Default</option>
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>
                 <option value="large">Large</option>
               </select>
-            </div>
-
-            <div className="option-group">
-              <label>Printed Side:</label>
+            </label>
+            <label>
+              Printed Side:
               <select value={printedSide} onChange={(e) => setPrintedSide(e.target.value)} disabled={addingToCart}>
                 <option value="single">Single Side</option>
                 <option value="double">Double Side</option>
               </select>
-            </div>
-
-            <div className="option-group">
-              <label>Quantity:</label>
-              <div className="quantity-controls">
-                <button 
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  disabled={quantity <= 1 || addingToCart}
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  disabled={addingToCart}
-                />
-                <button 
-                  onClick={() => setQuantity(q => q + 1)}
-                  disabled={addingToCart}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            <div className="total-price">
-              Total: ₹{calculatePrice()}
-            </div>
+            </label>
+            <label>
+              Quantity:
+              <button disabled={quantity <= 1 || addingToCart} onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                -
+              </button>
+              <input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                disabled={addingToCart}
+              />
+              <button disabled={addingToCart} onClick={() => setQuantity(quantity + 1)}>
+                +
+              </button>
+            </label>
+            <div>Total: ₹{calculatePrice()}</div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="action-buttons">
-            <button
-              className="add-to-cart-btn"
-              onClick={handleAddToCart}
-              disabled={addingToCart || product.stock <= 0}
-            >
-              {addingToCart ? 'Adding...' : 'Add to Cart'}
-            </button>
-            <button
-              className="buy-now-btn"
-              onClick={handleBuyNow}
-              disabled={addingToCart || product.stock <= 0}
-            >
-              Buy Now
-            </button>
-          </div>
+          <button disabled={addingToCart || product.stock <= 0} onClick={handleAddToCart}>
+            {addingToCart ? 'Adding...' : 'Add to Cart'}
+          </button>
+          <button disabled={addingToCart || product.stock <= 0} onClick={handleBuyNow}>
+            Buy Now
+          </button>
         </div>
-
-        {/* Reviews Section */}
-        <div className="reviews-section">
-          <h2>Customer Reviews</h2>
-          <div className="product-reviews-section">
-            <div className="reviews-header">
-              <div className="average-rating">
-                <ReviewStars rating={product.averageRating || 0} />
-                <span>({product.reviews?.length || 0} reviews)</span>
-              </div>
-              {isAuthenticated && (
+      </div>
+      {/* AI Review Summary */}
+      <div className="ai-review-summary">
+        <Sparkles className="icon-sparkles" />
+        <h3>AI Review Summary</h3>
+        <p>{aiSummary}</p>
+      </div>
+      {/* Review Form */}
+      
+     {isAuthenticated && (
                 canReview ? (
                   <button 
                     className="write-review-btn"
@@ -333,13 +335,11 @@ const ProductDetails = () => {
                   </div>
                 )
               )}
-            </div>
-            <ReviewList productId={product._id} initialReviews={product.reviews || []} />
-          </div>
-        </div>
+      {/* Reviews Listing */}
+      <div className="reviews-section">
+        <h2>Customer Reviews ({product.reviews?.length || 0})</h2>
+        <ReviewList productId={product._id} initialReviews={product.reviews || []} />
       </div>
     </div>
   );
-};
-
-export default ProductDetails;
+}

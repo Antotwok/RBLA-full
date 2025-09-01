@@ -447,3 +447,147 @@
     padding-top: 110px;
   }
 }
+
+/* ============================= */
+/* Review Form Section Styling   */
+/* ============================= */
+.review-form {
+  background-color: #fdfdfd;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.review-form h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* ------- Textarea ------- */
+.review-form textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  resize: vertical;
+  margin: 1rem 0;
+  transition: border-color 0.2s ease;
+}
+
+.review-form textarea:focus {
+  outline: none;
+  border-color: #c41e3a;
+  box-shadow: 0 0 0 2px rgba(196, 30, 58, 0.2);
+}
+
+/* ------- Upload Buttons ------- */
+.review-form button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+}
+
+.review-form button svg {
+  flex-shrink: 0;
+}
+
+/* Upload photos */
+.review-form button:nth-of-type(1) {
+  background: #fff;
+  border: 1px solid #c41e3a;
+  color: #c41e3a;
+}
+
+.review-form button:nth-of-type(1):hover {
+  background-color: #ffeef1;
+}
+
+/* Upload video */
+.review-form button:nth-of-type(2) {
+  background: #fff;
+  border: 1px solid #555;
+  color: #555;
+}
+
+.review-form button:nth-of-type(2):hover {
+  background-color: #f2f2f2;
+}
+
+/* ------- Uploaded Previews ------- */
+.review-form img {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-top: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.review-form img:hover {
+  transform: scale(1.05);
+}
+
+.review-form video {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* ------- Star Rating Styling ------- */
+.review-stars {
+  display: flex;
+  gap: 6px;
+  margin: 0.5rem 0 1rem;
+}
+
+.review-stars svg {
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  stroke: #c41e3a;
+  fill: none;
+  transition: transform 0.2s ease;
+}
+
+.review-stars svg.filled {
+  fill: #c41e3a;
+}
+
+.review-stars svg:hover {
+  transform: scale(1.15);
+}
+
+/* ------- Submit Button ------- */
+.review-form button:last-of-type {
+  background-color: #c41e3a;
+  color: white;
+  border: none;
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+
+.review-form button:last-of-type:hover {
+  background-color: #a01830;
+}
+
+.review-form button:last-of-type:disabled {
+  background-color: #ddd;
+  color: #666;
+  cursor: not-allowed;
+}
